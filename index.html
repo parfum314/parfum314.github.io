@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2a1240">
+<title>Parfum</title>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Noto+Naskh+Arabic:wght@600;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf5ee;--fg:#2b1a3a;--card:#fff;--mut:#7b6d88;--acc:#b8862f;--line:#eadfd0;--chip:#f3ebdf;
+  --sh:0 8px 30px #2b1a3a14;
+  --grad:linear-gradient(135deg,#2a1240 0%,#51286e 55%,#7d3f78 100%);
+  --gold:linear-gradient(135deg,#f0cd7e,#b8862f);
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#120b1a;--fg:#f5edf9;--card:#1d1329;--mut:#a99bb8;--acc:#e3b25c;--line:#33264a;--chip:#2a1e3a;--sh:0 8px 30px #0008;
+}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.disp{font-family:"Cormorant Garamond","Noto Naskh Arabic","Noto Serif SC",Georgia,serif}
+[lang=ar] .disp{font-family:"Noto Naskh Arabic",serif}
+[lang=zh] .disp{font-family:"Noto Serif SC",serif}
+.hide{display:none!important}
+.w{max-width:1000px;margin:0 auto}
+button,select,input,textarea{font:inherit;color:inherit}
+a{color:inherit}
+
+/* ---------- أزرار ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:12px 20px;font-weight:700;cursor:pointer;background:var(--gold);color:#2a1240;text-decoration:none;transition:transform .15s,opacity .15s}
+.btn:active{transform:scale(.97)}
+.btn.big{width:100%;padding:15px;font-size:17px}
+.btn.alt{background:var(--chip);color:var(--fg);border:1px solid var(--line)}
+.btn.sm{padding:7px 13px;font-size:14px;border-radius:9px}
+.btn[disabled]{opacity:.55;cursor:wait}
+.g{background:none;border:1px solid #ffffff55;color:inherit;padding:5px 12px;border-radius:20px;cursor:pointer;font-size:13px}
+.g[aria-pressed=true]{background:var(--gold);border-color:transparent;color:#2a1240;font-weight:700}
+
+/* ---------- صفحة الدخول ---------- */
+#login{position:fixed;inset:0;z-index:50;background:var(--grad);color:#fbf3e4;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;overflow:auto}
+#login::before,#login::after{content:"";position:absolute;border-radius:50%;filter:blur(70px);opacity:.4;pointer-events:none}
+#login::before{width:320px;height:320px;background:#e3b25c;top:-110px;inset-inline-start:-90px}
+#login::after{width:380px;height:380px;background:#a04fa8;bottom:-150px;inset-inline-end:-110px}
+.lw{position:relative;max-width:400px;width:100%;margin:auto}
+.lg{display:flex;gap:6px;justify-content:center;margin-bottom:34px}
+.bottle{width:92px;height:auto;animation:float 5s ease-in-out infinite}
+.lw h1{font-size:54px;line-height:1;margin:14px 0 4px;letter-spacing:1px}
+.tag{color:#f0cd7e;letter-spacing:3px;font-size:13px;text-transform:uppercase;margin:0 0 26px}
+.lw h2{font-size:26px;margin:0 0 8px}
+.lw p.s{opacity:.8;margin:0 0 26px}
+#loginBtn{width:100%;padding:15px;font-size:18px;border-radius:999px;box-shadow:0 10px 30px #0006}
+#loginMsg{min-height:24px;margin:14px 0 0;color:#ffd9a0;font-size:14px}
+.lh{opacity:.6;font-size:13px;margin-top:6px}
+.up{animation:up .8s both}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+@keyframes float{50%{transform:translateY(-8px)}}
+@keyframes sh{to{background-position:-200% 0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- رأس التطبيق ---------- */
+.hd{background:var(--grad);color:#fbf3e4;padding:14px 16px 56px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.brand{font-size:30px;font-weight:700;letter-spacing:1px}
+.brand i{color:#f0cd7e;font-style:normal}
+.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.chip{background:#ffffff1f;border-radius:20px;padding:3px 12px;font-size:13px}
+.hero h1{font-size:clamp(30px,7vw,50px);line-height:1.12;margin:22px 0 6px;max-width:15em}
+.hero p{margin:0;opacity:.8;max-width:32em}
+main{padding:0 16px 120px;margin-top:-30px}
+
+/* ---------- بطاقات ونماذج ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)}
+.card h2{margin:0 0 4px;font-size:28px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acc);outline-offset:1px}
+label{display:block;margin:12px 0 3px;font-size:14px;color:var(--mut)}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f input{grid-column:1/-1}
+@media(min-width:700px){.f{grid-template-columns:2fr 1fr 1fr}.f input{grid-column:auto}}
+.mut{color:var(--mut);font-size:14px}
+.cnt{margin:4px 2px 12px}
+.cta{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--grad);color:#fbf3e4;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:var(--sh)}
+.cta h3{margin:0;font-size:26px}
+.cta p{margin:2px 0 0;opacity:.85;max-width:30em}
+.open{background:var(--grad);color:#fbf3e4;border:0}
+.open ul{list-style:none;margin:12px 0 0;padding:0}
+.open li::before{content:"✓";color:#f0cd7e;font-weight:700;margin-inline-end:8px}
+.pricechip{display:inline-block;background:var(--gold);color:#2a1240;font-weight:800;padding:3px 14px;border-radius:999px;margin-top:8px}
+.warn{background:#fff0c9;color:#7a4d00;border-radius:10px;padding:8px 12px;margin:10px 0;font-size:14px}
+.badge{display:inline-block;font-size:12px;padding:1px 10px;border-radius:20px;background:var(--chip)}
+.live{background:#d8f3e0;color:#14532d}
+.unpaid{background:#fff0c9;color:#7a4d00}
+.pending{background:#e0e7ff;color:#1e3a8a}
+.removed,.refunded{background:#fde2e2;color:#7f1d1d}
+.ic{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:-2px;margin-inline-end:4px;flex:none}
+
+/* ---------- الشبكات والبطاقات ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.grid.sg{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.empty{grid-column:1/-1;text-align:center;padding:30px 0}
+.pc,.sc{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column;transition:transform .2s}
+.pc[data-pid],.sc{cursor:pointer}
+.pc[data-pid]:hover,.sc:hover{transform:translateY(-3px)}
+.pi{position:relative;aspect-ratio:1;background:var(--chip)}
+.pi img{width:100%;height:100%;object-fit:cover;display:block}
+.price{position:absolute;bottom:8px;inset-inline-end:8px;background:#2a1240e6;color:#f3d48f;padding:2px 10px;border-radius:999px;font-weight:700;font-size:13px}
+.pb{padding:10px 12px 12px;flex:1}
+.pb h3,.sb h3{margin:0;font-size:22px;line-height:1.15}
+.ps{margin-top:6px;font-size:13px;color:var(--mut)}
+.sc>img{width:100%;height:150px;object-fit:cover;display:block;background:var(--chip)}
+.sb{padding:12px 14px}
+.loc{color:var(--acc);font-size:14px;font-weight:600}
+.sk{aspect-ratio:3/4;border-radius:16px;background:linear-gradient(90deg,var(--chip),var(--line),var(--chip));background-size:200% 100%;animation:sh 1.2s infinite}
+
+/* ---------- لوحة المحل ---------- */
+.banner{position:relative;border-radius:20px;overflow:hidden;min-height:190px;display:flex;align-items:flex-end;background:var(--grad);color:#fff;box-shadow:var(--sh);margin-bottom:12px}
+.banner>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.banner::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#1a0b2ad0,#1a0b2a22 70%)}
+.bi{position:relative;z-index:1;padding:16px}
+.bi h2{margin:6px 0 2px;font-size:32px;color:#fff}
+.ed{position:absolute;top:12px;inset-inline-end:12px;z-index:2}
+.h2{font-size:30px;margin:6px 0}
+.h3{font-size:26px;margin:20px 0 10px}
+.pv{max-width:140px;border-radius:10px;margin-top:8px;display:block}
+
+/* ---------- التنقل السفلي ---------- */
+.bn{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px;box-shadow:0 10px 30px #0003;z-index:15;max-width:calc(100% - 20px)}
+.bn button{display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:0;padding:7px 16px;border-radius:999px;color:var(--mut);font-size:12px;cursor:pointer;white-space:nowrap}
+.bn button.on{background:var(--grad);color:#fff}
+.bn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- نافذة التفاصيل ---------- */
+.ov{position:fixed;inset:0;background:#000a;display:flex;align-items:flex-end;justify-content:center;z-index:40}
+.ov[hidden]{display:none}
+.md{background:var(--card);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;position:relative;animation:up .3s}
+@media(min-width:700px){.ov{align-items:center}.md{border-radius:22px}}
+.x{position:absolute;top:10px;inset-inline-end:10px;z-index:2;width:36px;height:36px;border-radius:50%;border:0;background:#000a;color:#fff;font-size:16px;cursor:pointer}
+.mi{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--chip)}
+.mb{padding:18px 18px 26px}
+.pr{font-size:28px;font-weight:700;color:var(--acc);margin:6px 0}
+.desc{white-space:pre-line}
+.line{padding:9px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.ls{display:flex;gap:10px;align-items:center}
+.th{width:44px;height:44px;object-fit:cover;border-radius:8px}
+.sbox{background:var(--chip);border-radius:14px;padding:12px 14px;margin:14px 0}
+
+/* ---------- نافذة التأكيد المخصصة (الاسترجاع / الحذف / السبب) ---------- */
+.dov{position:fixed;inset:0;z-index:80;background:#120b1ab8;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+.dov[hidden]{display:none}
+.dbox{width:100%;max-width:440px;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px 22px 20px;box-shadow:0 30px 80px #0008;position:relative;overflow:hidden;animation:pop .24s ease-out both;margin:auto}
+.dbox::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:var(--gold)}
+.dbox.dng::before{background:linear-gradient(90deg,#ec6a70,#b3262e)}
+.dic{width:58px;height:58px;border-radius:19px;display:grid;place-items:center;margin-bottom:14px}
+.dic svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dic.danger{background:#e5484d22;color:#ec6a70}
+.dic.gold{background:#e3b25c26;color:var(--acc)}
+.dic.ok{background:#3fb95026;color:#2f9e44}
+.dt{font-size:30px;line-height:1.12;margin:0 0 6px;font-weight:700}
+.dp{margin:0 0 14px;color:var(--mut);font-size:15px;line-height:1.55}
+.dsum{background:var(--chip);border:1px solid var(--line);border-radius:16px;padding:2px 14px;margin:0 0 12px}
+.dr{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.dr:last-child{border-bottom:0}
+.dr span{color:var(--mut);flex:none}
+.dr b{text-align:end;word-break:break-word}
+.dr.hl b{color:var(--acc);font-size:18px}
+.dnote{display:flex;gap:9px;align-items:flex-start;background:#e3b25c1f;border:1px solid #e3b25c55;border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.5;margin:0 0 12px}
+.dnote .ic{width:16px;height:16px;margin:2px 0 0;color:var(--acc)}
+.dl{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px;color:var(--mut);margin:4px 0 8px}
+.dl em{font-style:normal;opacity:.75}
+.dcnt{font-size:12px;opacity:.7}
+.dchips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.dchip{border:1px solid var(--line);background:var(--chip);color:var(--fg);border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;transition:background .15s}
+.dchip:hover{border-color:var(--acc)}
+.dchip.on{background:var(--gold);color:#2a1240;border-color:transparent;font-weight:700}
+.dbox textarea{resize:none;min-height:84px;border-radius:14px}
+.dbox textarea.bad{outline:2px solid #e5484d;outline-offset:1px}
+.derr{min-height:20px;color:#ec6a70;font-size:13px;margin-top:4px}
+.dbtn{display:flex;gap:10px;margin-top:10px}
+.dbtn .btn{flex:1;padding:13px 14px}
+.btn.danger{background:linear-gradient(135deg,#ec6a70,#b3262e);color:#fff}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.96)}}
+@keyframes sheet{from{opacity:.4;transform:translateY(40px)}}
+@media(max-width:560px){
+  .dov{align-items:flex-end;padding:0}
+  .dbox{max-width:none;margin:0;border-radius:28px 28px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));animation:sheet .26s ease-out both}
+}
+
+#toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:12px;z-index:90;max-width:90vw;text-align:center}
+.note{text-align:center;margin-top:30px}
+
+/* ---------- الإدارة: تبويبات + إحصائيات ---------- */
+.seg{display:flex;gap:4px;background:var(--chip);border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:14px}
+.seg button{flex:1;border:0;background:none;padding:10px;border-radius:10px;font-weight:700;cursor:pointer;color:var(--mut)}
+.seg button.on{background:var(--grad);color:#fff}
+.sthead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 2px 12px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:2px}
+.kpi span{color:var(--mut);font-size:13px}
+.kpi b{font-size:22px;line-height:1.25}
+.kpi small{color:var(--mut);font-size:12px}
+.kpi.main{grid-column:1/-1;background:var(--grad);color:#fbf3e4;border:0;padding:16px 18px}
+.kpi.main span,.kpi.main small{color:#fbf3e4;opacity:.8}
+.kpi.main b{font-size:36px;color:#f3d48f}
+.two{display:grid;grid-template-columns:1fr;gap:0 14px}
+@media(min-width:700px){.two{grid-template-columns:1fr 1fr}}
+.tw{overflow-x:auto}
+.tb{width:100%;border-collapse:collapse;font-size:14px}
+.tb th{color:var(--mut);font-weight:600;text-align:start;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tb td{padding:9px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tb tr:last-child td{border-bottom:0}
+.bars{display:flex;gap:4px;height:130px;margin-top:10px}
+.bc{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;min-width:0}
+.bt{width:100%;height:calc(100% - 16px);display:flex;align-items:flex-end;justify-content:center}
+.bt i{display:block;width:100%;max-width:22px;border-radius:6px 6px 2px 2px;background:var(--gold)}
+.bc em{font-style:normal;font-size:10px;color:var(--mut);margin-top:4px;height:12px;line-height:12px}
+.hb{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:14px}
+.hb>span{width:34%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hb .tr{flex:1;height:10px;border-radius:99px;background:var(--chip);overflow:hidden}
+.hb .tr i{display:block;height:100%;border-radius:99px;background:var(--gold)}
+.hb>b{font-size:13px;min-width:44px;text-align:end}
+.al{border-radius:12px;padding:9px 12px;margin-bottom:8px;font-size:14px}
+.al.okk{background:#d8f3e0;color:#14532d}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+.sttl{margin:0 0 6px;font-size:26px}
+
+/* ---------- مراجعة المحلات (الأدمن) ---------- */
+.rv{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.rv:last-child{border-bottom:0}
+.rvi{width:110px;height:110px;object-fit:cover;border-radius:12px;flex:none;background:var(--chip)}
+.rvb{flex:1;min-width:200px}
+.rvb .row{margin-top:8px}
+.legal{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.lbtn{display:inline-flex;padding:7px 16px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--fg);font-size:13px;font-weight:600;text-decoration:none}
+#login .lbtn{background:#ffffff1f;border-color:#ffffff55;color:#fbf3e4}
+</style>
+</head>
+<body>
+
+<!-- ================= صفحة تسجيل الدخول ================= -->
+<div id="login">
+  <div class="lw">
+    <div class="lg">
+      <button class="g" data-l="en">EN</button><button class="g" data-l="ar">عربي</button><button class="g" data-l="zh">中文</button>
+    </div>
+    <div class="up">
+      <svg class="bottle" viewBox="0 0 96 130" fill="none" aria-hidden="true">
+        <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3d48f"/><stop offset="1" stop-color="#b8862f"/></linearGradient></defs>
+        <rect x="38" y="4" width="20" height="16" rx="3" fill="url(#gg)"/>
+        <rect x="42" y="20" width="12" height="12" fill="#f3d48f" opacity=".7"/>
+        <rect x="12" y="32" width="72" height="92" rx="18" fill="#ffffff14" stroke="url(#gg)" stroke-width="2.5"/>
+        <rect x="26" y="60" width="44" height="40" rx="6" fill="#ffffff1a" stroke="url(#gg)" stroke-width="1.5"/>
+        <path d="M38 80h20M42 88h12" stroke="#f3d48f" stroke-width="2" stroke-linecap="round"/>
+        <path d="M22 48c0 0 5-5 11-5" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <h1 class="disp">Parfum</h1>
+      <p class="tag" data-i="tagline"></p>
+      <h2 class="disp" data-i="ltitle"></h2>
+      <p class="s" data-i="lsub"></p>
+      <button class="btn" id="loginBtn" data-i="login"></button>
+      <p id="loginMsg"></p>
+      <p class="lh" data-i="lhint"></p>
+      <div class="legal"><a class="lbtn" href="privacy.html" data-i="privacy"></a><a class="lbtn" href="terms.html" data-i="terms"></a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= التطبيق ================= -->
+<div id="app" class="hide">
+  <header class="hd"><div class="w">
+    <div class="top">
+      <div class="brand disp">Parfum<i>.</i></div>
+      <div class="row">
+        <button class="g" data-l="en">EN</button><button class="g" data-l="ar">عربي</button><button class="g" data-l="zh">中文</button>
+        <span id="who" class="chip"></span>
+        <button class="g" data-act="logout" data-i="logout"></button>
+      </div>
+    </div>
+    <div class="hero"><h1 class="disp" data-i="title"></h1><p data-i="sub"></p></div>
+  </div></header>
+
+  <main><div class="w">
+
+    <div id="cta" class="cta hide">
+      <div><h3 class="disp" data-i="ctaTitle"></h3><p id="ctaText"></p></div>
+      <button class="btn" data-go="my" data-i="ctaBtn"></button>
+    </div>
+
+    <div id="filters" class="card f">
+      <input id="q" type="search" data-p="search">
+      <select id="fc"></select>
+      <select id="fr"></select>
+    </div>
+
+    <!-- عرض العطور -->
+    <section id="vHome">
+      <div class="mut cnt" id="cnt"></div>
+      <div class="grid" id="pgrid"></div>
+    </section>
+
+    <!-- عرض المحلات -->
+    <section id="vShops" class="hide">
+      <div class="mut cnt" id="scnt"></div>
+      <div class="grid sg" id="sgrid"></div>
+    </section>
+
+    <!-- محلي / افتح محلاً -->
+    <section id="vMy" class="hide">
+      <div id="openView">
+        <div class="card open" id="openCard">
+          <h2 class="disp" data-i="openTitle"></h2>
+          <p id="openText" style="margin:4px 0 0;opacity:.85"></p>
+          <ul><li data-i="perk1"></li><li data-i="perk2"></li><li id="perk3"></li></ul>
+          <span class="pricechip" id="feeChip"></span>
+        </div>
+        <div id="openSlot">
+          <div class="card" id="shopForm">
+            <h2 class="disp" data-i="shopTitle"></h2>
+            <div id="shopMsg"></div>
+            <label data-i="fname"></label><input id="sn" maxlength="80">
+            <label data-i="fcountry"></label><select id="sc"></select>
+            <label data-i="fregion"></label><input id="sr" maxlength="60">
+            <label data-i="faddr"></label><input id="sa" maxlength="160">
+            <label data-i="fphone"></label><input id="sp" maxlength="30" dir="ltr" inputmode="tel">
+            <label data-i="fhours"></label><input id="sh" maxlength="60" dir="ltr">
+            <label data-i="fdesc"></label><textarea id="sd" rows="3" maxlength="500"></textarea>
+            <label data-i="fimg"></label><input type="file" id="sf" accept="image/jpeg,image/png,image/webp">
+            <img id="spv" class="pv hide" alt="">
+            <p class="mut" id="refNote"></p>
+            <button class="btn big" id="saveShop"></button>
+          </div>
+        </div>
+      </div>
+
+      <div id="dashView" class="hide">
+        <div class="banner" id="banner"></div>
+        <button class="btn big" id="addProdBtn" style="margin-bottom:14px"></button>
+        <div id="editSlot"></div>
+        <div class="card hide" id="prodFormCard">
+          <h2 class="disp" id="prodTitle"></h2>
+          <label data-i="pname"></label><input id="pn" maxlength="80">
+          <label data-i="pbrand"></label><input id="pb" maxlength="60">
+          <label data-i="psize"></label><input id="ps" maxlength="30" dir="ltr">
+          <label data-i="pprice"></label><input id="pp" type="number" min="0" step="any" dir="ltr" inputmode="decimal">
+          <label data-i="pcur"></label><select id="pc" dir="ltr"><option value="Pi">Pi</option><option value="OUSD">OUSD</option></select>
+          <label data-i="pdesc"></label><textarea id="pd" rows="2" maxlength="400"></textarea>
+          <label data-i="pimg"></label><input type="file" id="pf" accept="image/jpeg,image/png,image/webp">
+          <img id="ppv" class="pv hide" alt="">
+          <p class="mut" data-i="noRefProd" style="margin:12px 0 0"></p>
+          <div class="row" style="margin-top:14px">
+            <button class="btn" id="saveProd" style="flex:1"></button>
+            <button class="btn alt" id="cancelProd" data-i="cancel"></button>
+          </div>
+        </div>
+        <h2 class="disp h3" data-i="myProducts"></h2>
+        <div class="grid" id="mgrid"></div>
+      </div>
+    </section>
+
+    <!-- الإدارة -->
+    <section id="vAdm" class="hide">
+      <div class="seg">
+        <button class="on" data-atab="stats" data-i="admStats"></button>
+        <button data-atab="manage" data-i="admManage"></button>
+      </div>
+      <div id="aStats"></div>
+      <div id="aManage" class="hide">
+        <div class="card"><h2 class="disp" data-i="admReview"></h2><div id="aReview"></div></div>
+        <div class="card"><h2 class="disp" data-i="admShops"></h2><div id="aShops"></div></div>
+        <div class="card"><h2 class="disp" data-i="admProds"></h2><div id="aProds"></div></div>
+        <div class="card"><h2 class="disp" data-i="admPays"></h2><div id="aPays"></div></div>
+      </div>
+    </section>
+
+    <p class="mut note" data-i="note"></p>
+    <div class="legal"><a class="lbtn" href="privacy.html" data-i="privacy"></a><a class="lbtn" href="terms.html" data-i="terms"></a></div>
+  </div></main>
+
+  <nav class="bn">
+    <button class="on" data-go="home">
+      <svg viewBox="0 0 24 24"><path d="M9 3h6v3H9zM8 6h8v3l2 2v9a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-9l2-2z"/></svg>
+      <span data-i="navHome"></span>
+    </button>
+    <button data-go="shops">
+      <svg viewBox="0 0 24 24"><path d="M4 9l1.5-5h13L20 9M4 9a2.5 2.5 0 0 0 4 2 2.5 2.5 0 0 0 4 0 2.5 2.5 0 0 0 4 0 2.5 2.5 0 0 0 4-2M5 12v8h14v-8"/></svg>
+      <span data-i="navShops"></span>
+    </button>
+    <button data-go="my">
+      <svg viewBox="0 0 24 24"><path d="M6 8h12l1 12H5zM9 8a3 3 0 0 1 6 0"/></svg>
+      <span id="navMyL"></span>
+    </button>
+    <button data-go="adm" id="admTab" class="hide">
+      <svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>
+      <span data-i="adm"></span>
+    </button>
+  </nav>
+</div>
+
+<div class="ov" id="ov" hidden><div class="md" id="md"></div></div>
+<div class="dov" id="dlg" hidden><div class="dbox" id="dlgBox" role="dialog" aria-modal="true"></div></div>
+<div id="toast" class="hide"></div>
+
+<script>
+/* عنوان السيرفر على Render (لا تغيّره إلا إذا تغيّر رابط السيرفر) */
+const API="https://sahraoui15.onrender.com";
+
+/* الصلاحيات المطلوبة عند الدخول.
+   wallet_address ضرورية لكي يستطيع السيرفر إرجاع الأموال (A2U) إلى المستخدم */
+const SCOPES=["username","payments","wallet_address"];
+const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+const CODES="AD,AE,AF,AG,AI,AL,AM,AO,AR,AS,AT,AU,AW,AX,AZ,BA,BB,BD,BE,BF,BG,BH,BI,BJ,BL,BM,BN,BO,BQ,BR,BS,BT,BW,BY,BZ,CA,CC,CD,CF,CG,CH,CI,CK,CL,CM,CN,CO,CR,CU,CV,CW,CX,CY,CZ,DE,DJ,DK,DM,DO,DZ,EC,EE,EG,EH,ER,ES,ET,FI,FJ,FK,FM,FO,FR,GA,GB,GD,GE,GF,GG,GH,GI,GL,GM,GN,GP,GQ,GR,GS,GT,GU,GW,GY,HK,HN,HR,HT,HU,ID,IE,IL,IM,IN,IO,IQ,IR,IS,IT,JE,JM,JO,JP,KE,KG,KH,KI,KM,KN,KP,KR,KW,KY,KZ,LA,LB,LC,LI,LK,LR,LS,LT,LU,LV,LY,MA,MC,MD,ME,MF,MG,MH,MK,ML,MM,MN,MO,MP,MQ,MR,MS,MT,MU,MV,MW,MX,MY,MZ,NA,NC,NE,NF,NG,NI,NL,NO,NP,NR,NU,NZ,OM,PA,PE,PF,PG,PH,PK,PL,PM,PN,PR,PS,PT,PW,PY,QA,RE,RO,RS,RU,RW,SA,SB,SC,SD,SE,SG,SH,SI,SJ,SK,SL,SM,SN,SO,SR,SS,ST,SV,SX,SY,SZ,TC,TD,TG,TH,TJ,TK,TL,TM,TN,TO,TR,TT,TV,TW,TZ,UA,UG,US,UY,UZ,VA,VC,VE,VG,VI,VN,VU,WF,WS,XK,YE,YT,ZA,ZM,ZW".split(",");
+
+const T={
+en:{privacy:"Privacy Policy",terms:"Terms of Use",noRefShop:"The shop fee is not refunded when an approved shop is removed.",ltitle:"Welcome to Parfum",lsub:"Sign in with your Pi account to explore perfumes from shops around the world.",login:"Continue with Pi",loginBusy:"Signing in...",loginErr:"Login failed. Please open the app in Pi Browser and try again.",lhint:"Best experienced inside Pi Browser",tagline:"Fine perfumes · Pi",
+title:"Fine perfumes from shops near and far",sub:"Browse perfumes, then contact the shop directly.",
+logout:"Logout",navHome:"Perfumes",navShops:"Shops",my:"My shop",openTab:"Open shop",adm:"Admin",
+search:"Search perfume, brand or shop",allC:"All countries",allR:"All regions",perfumes:"perfumes",shops:"shops",noneP:"No perfumes match your search.",noneS:"No shops match your search.",
+ctaTitle:"Own a perfume shop?",ctaText:"Open your shop for {x} Pi and show your perfumes to customers worldwide.",ctaBtn:"Open a shop",
+openTitle:"Open your shop",openText:"Fill in your shop details, then pay a one-time fee of {x} Pi to submit it for review. It goes live once approved.",perk1:"Reach perfume lovers worldwide",perk2:"Customers contact you directly",perk3:"Add each perfume for just {x} Pi",
+openBtn:"Open shop — {x} Pi",payBtn:"Complete payment — {x} Pi",unpaidNote:"Your details are saved. Complete the payment to submit your shop for review.",refundedNote:"Your shop was not approved and your payment was refunded. Update your details and pay again to resubmit.",removedNote:"This shop was removed by the administrator.",
+pendingNote:"Your payment was received. Your shop is under review and will be published once the administrator approves it. You can still edit your details below.",paidReview:"Payment completed. Your shop is now under review.",
+shopTitle:"Shop details",fname:"Shop name",fcountry:"Country",fregion:"City / region",faddr:"Address",fphone:"Phone",fhours:"Opening hours",fdesc:"Description",fimg:"Shop photo",saveShop:"Save changes",editShop:"Edit shop",
+addProd:"Add product — {x} Pi",prodTitle:"Add a perfume",editTitle:"Edit perfume",myProducts:"My perfumes",pname:"Perfume name",pbrand:"Brand",psize:"Size (e.g. 50 ml)",pprice:"Price",pcur:"Currency",pdesc:"Description",pimg:"Product photo",cancel:"Cancel",
+pay:"Pay {x} Pi",edit:"Edit",del:"Delete",delC:"Delete this product?",saved:"Saved",paid:"Payment completed. Published!",cancelled:"Payment cancelled",upl:"Uploading...",imgFirst:"Please upload a photo first.",fillAll:"Please fill in all required fields.",
+st_unpaid:"Awaiting payment",st_pending:"Under review",st_live:"Live",st_removed:"Removed",st_refunded:"Refunded",note2:"Note",
+addr:"Address",tel:"Phone",hrs:"Hours",call:"Call shop",viewShop:"View shop",prods:"Perfumes",empty:"Nothing here yet.",
+note:"This app is a directory only. Buying is arranged directly with the shop.",netErr:"Cannot reach the server. Please wait a minute and try again.",
+refNote:"Your shop goes live after admin review. If rejected, the shop fee is refunded minus a network fee of {x} Pi. Perfume fees are non-refundable.",noRefProd:"Perfume fees are non-refundable.",
+admShops:"Shops",admProds:"Perfumes",admPays:"Payments",admReview:"Pending review",noPending:"No shops are waiting for review.",remove:"Remove",restore:"Restore",refund:"Refund",reason:"Write the reason shown to the owner...",refunded:"Refund sent",dup:"duplicate",refFail:"Removed, but the refund failed. Retry it from Payments.",removedOk:"Removed",
+approve:"Approve",reject:"Reject",apvT:"Approve this shop?",apvP:"The shop will be published and visible to everyone.",apvOk:"Shop approved and published",
+rejT:"Reject this shop?",rejP:"The owner will be notified with your reason and the shop fee will be refunded to their wallet.",rejNote:"The owner can fix the details and pay again to resubmit.",okReject:"Reject & refund",rejOk:"Shop rejected",refFail2:"The refund failed, so the shop is still under review. Press Reject again to retry.",
+admStats:"Statistics",admManage:"Management",stRefresh:"Refresh",stUpdated:"Updated {x}",
+stNet:"Net revenue",stCollected:"Collected",stRefundedL:"Refunded",stLiveShops:"Live shops",stPending:"Pending review",stLiveProds:"Live perfumes",stOwners:"Shop owners",stAvg:"Perfumes per shop",stPays:"Payments",stShopFees:"Shop fees",stProdFees:"Perfume fees",stRefundedTo:"Refunded to owners",stKept:"Network fees paid",stOf:"of {x} total",
+stActivity:"Activity",pToday:"Today",p7:"Last 7 days",p30:"Last 30 days",pAll:"All time",stColl:"Collected",stNewShops:"New shops",stNewProds:"New perfumes",
+stRev14:"Collected — last 14 days",stShops14:"New shops — last 14 days",stTotal:"Total",stStatus:"Status overview",stCountries:"By country (shops · perfumes)",stTop:"Top shops by perfumes",stAttn:"Needs attention",stRecent:"Latest payments",
+alPending:"{x} shop(s) waiting for your review. Open Management › Pending review.",alFail:"{x} failed refund(s). Retry from Management › Payments.",alStuck:"{x} refund(s) stuck. Retry to complete them.",alProc:"{x} refund(s) in progress.",alDup:"{x} duplicate payment(s) recorded.",alUnpaidS:"{x} shop(s) awaiting payment.",alUnpaidP:"{x} perfume(s) awaiting payment.",alOk:"All good. Nothing needs your attention.",
+tShopFee:"Shop fee",tProdFee:"Perfume fee",nonref:"Non-refundable",rs_none:"Not refunded",rs_processing:"Processing",rs_refunded:"Refunded",rs_failed:"Failed",rs_stuck:"Stuck",
+rmShopT:"Remove this shop?",rmShopP:"The shop and all its perfumes will be permanently deleted.",rmProdT:"Remove this perfume?",rmProdP:"It will be permanently deleted from the shop.",
+rShop:"Shop",rOwner:"Owner",rProds:"Perfumes",rItem:"Item",rPaid:"Amount paid",rShopFee:"Shop fee paid",rNet:"Network fee",rRef:"Refund to owner",
+reasonL:"Reason",reasonReq:"Please write a reason.",optional:"optional",
+rc1:"Violates the rules",rc2:"Inappropriate content",rc3:"False information",rc4:"Duplicate listing",rc5:"Requested by the owner",
+refT:"Refund this payment?",refP:"The refund will be sent to the owner's wallet.",resT:"Restore this item?",resP:"It becomes visible again once its fee is paid.",okRmRef:"Remove & refund",delT:"Delete this perfume?"},
+ar:{privacy:"سياسة الخصوصية",terms:"شروط الاستخدام",noRefShop:"لا تُسترجع رسوم فتح المحل عند حذف محل تمت الموافقة عليه.",ltitle:"مرحباً بك في Parfum",lsub:"سجّل الدخول بحساب Pi لاستكشاف العطور من محلات حول العالم.",login:"المتابعة عبر Pi",loginBusy:"جاري الدخول...",loginErr:"فشل الدخول. افتح التطبيق من Pi Browser وأعد المحاولة.",lhint:"يعمل بأفضل شكل داخل Pi Browser",tagline:"عطور فاخرة · Pi",
+title:"عطور فاخرة من محلات قريبة وبعيدة",sub:"تصفّح العطور ثم تواصل مع المحل مباشرة.",
+logout:"خروج",navHome:"العطور",navShops:"المحلات",my:"محلي",openTab:"افتح محلاً",adm:"الإدارة",
+search:"ابحث عن عطر أو ماركة أو محل",allC:"كل الدول",allR:"كل المناطق",perfumes:"عطر",shops:"محل",noneP:"لا توجد عطور مطابقة.",noneS:"لا توجد محلات مطابقة.",
+ctaTitle:"هل تملك محل عطور؟",ctaText:"افتح محلك مقابل {x} باي واعرض عطورك لعملاء من كل العالم.",ctaBtn:"افتح محلاً",
+openTitle:"افتح محلك",openText:"املأ بيانات محلك ثم ادفع رسماً لمرة واحدة قدره {x} باي لإرساله للمراجعة. يُنشر المحل بعد موافقة الإدارة.",perk1:"اصل إلى محبي العطور حول العالم",perk2:"يتواصل معك العملاء مباشرة",perk3:"أضف كل عطر مقابل {x} باي فقط",
+openBtn:"افتح المحل — {x} باي",payBtn:"إتمام الدفع — {x} باي",unpaidNote:"تم حفظ بياناتك. أكمل الدفع لإرسال محلك للمراجعة.",refundedNote:"لم تتم الموافقة على محلك وتم استرجاع دفعتك. عدّل بياناتك وادفع مجدداً لإعادة الإرسال.",removedNote:"تم حذف هذا المحل من طرف الإدارة.",
+pendingNote:"تم استلام دفعتك. محلك قيد المراجعة وسيُنشر بعد موافقة الإدارة. يمكنك تعديل بياناتك أدناه.",paidReview:"تمت عملية الدفع. محلك الآن قيد المراجعة.",
+shopTitle:"بيانات المحل",fname:"اسم المحل",fcountry:"الدولة",fregion:"المدينة / المنطقة",faddr:"العنوان",fphone:"الهاتف",fhours:"ساعات العمل",fdesc:"وصف المحل",fimg:"صورة المحل",saveShop:"حفظ التعديلات",editShop:"تعديل المحل",
+addProd:"إضافة منتج — {x} باي",prodTitle:"إضافة عطر",editTitle:"تعديل العطر",myProducts:"عطوري",pname:"اسم العطر",pbrand:"الماركة",psize:"الحجم (مثال: 50 مل)",pprice:"السعر",pcur:"العملة",pdesc:"الوصف",pimg:"صورة المنتج",cancel:"إلغاء",
+pay:"ادفع {x} باي",edit:"تعديل",del:"حذف",delC:"حذف هذا المنتج؟",saved:"تم الحفظ",paid:"تمت عملية الدفع. تم النشر!",cancelled:"تم إلغاء الدفع",upl:"جاري الرفع...",imgFirst:"ارفع صورة أولاً.",fillAll:"يرجى ملء كل الحقول المطلوبة.",
+st_unpaid:"بانتظار الدفع",st_pending:"قيد المراجعة",st_live:"منشور",st_removed:"محذوف",st_refunded:"تم الاسترجاع",note2:"ملاحظة",
+addr:"العنوان",tel:"الهاتف",hrs:"ساعات العمل",call:"اتصل بالمحل",viewShop:"عرض المحل",prods:"العطور",empty:"لا يوجد شيء بعد.",
+note:"هذا التطبيق دليل فقط. يتم الشراء مباشرة مع المحل.",netErr:"تعذّر الاتصال بالسيرفر. انتظر دقيقة ثم أعد المحاولة.",
+refNote:"يُنشر محلك بعد مراجعة الإدارة. في حال الرفض تُسترجع رسوم فتح المحل مع خصم {x} باي رسوم الشبكة. رسوم العطور غير قابلة للاسترجاع.",noRefProd:"رسوم العطور غير قابلة للاسترجاع.",
+admShops:"المحلات",admProds:"العطور",admPays:"المدفوعات",admReview:"بانتظار المراجعة",noPending:"لا توجد محلات بانتظار المراجعة.",remove:"حذف",restore:"استعادة",refund:"استرجاع",reason:"اكتب السبب الذي سيظهر لصاحب المحل...",refunded:"تم إرسال الاسترجاع",dup:"مكررة",refFail:"تم الحذف لكن فشل الاسترجاع. أعد المحاولة من المدفوعات.",removedOk:"تم الحذف",
+approve:"قبول",reject:"رفض",apvT:"قبول هذا المحل؟",apvP:"سيتم نشر المحل وسيظهر للجميع.",apvOk:"تم قبول المحل ونشره",
+rejT:"رفض هذا المحل؟",rejP:"سيصل صاحب المحل السبب الذي تكتبه وستُسترجع رسوم فتح المحل إلى محفظته.",rejNote:"يمكن لصاحب المحل تعديل بياناته والدفع من جديد لإعادة الإرسال.",okReject:"رفض واسترجاع",rejOk:"تم رفض المحل",refFail2:"فشل الاسترجاع لذلك بقي المحل قيد المراجعة. اضغط رفض مجدداً لإعادة المحاولة.",
+admStats:"الإحصائيات",admManage:"الإدارة",stRefresh:"تحديث",stUpdated:"آخر تحديث {x}",
+stNet:"صافي الإيرادات",stCollected:"المحصّل",stRefundedL:"المسترجع",stLiveShops:"محلات منشورة",stPending:"بانتظار المراجعة",stLiveProds:"عطور منشورة",stOwners:"أصحاب المحلات",stAvg:"عطور لكل محل",stPays:"عدد الدفعات",stShopFees:"رسوم المحلات",stProdFees:"رسوم العطور",stRefundedTo:"المسترجع لأصحاب المحلات",stKept:"رسوم الشبكة المدفوعة",stOf:"من أصل {x}",
+stActivity:"النشاط",pToday:"اليوم",p7:"آخر 7 أيام",p30:"آخر 30 يوماً",pAll:"الإجمالي",stColl:"المحصّل",stNewShops:"محلات جديدة",stNewProds:"عطور جديدة",
+stRev14:"المحصّل — آخر 14 يوماً",stShops14:"محلات جديدة — آخر 14 يوماً",stTotal:"المجموع",stStatus:"نظرة على الحالات",stCountries:"حسب الدولة (محلات · عطور)",stTop:"أكثر المحلات عطوراً",stAttn:"يحتاج انتباهك",stRecent:"آخر المدفوعات",
+alPending:"{x} محل بانتظار مراجعتك. افتح الإدارة › بانتظار المراجعة.",alFail:"{x} عملية استرجاع فاشلة. أعد المحاولة من الإدارة › المدفوعات.",alStuck:"{x} عملية استرجاع عالقة. أعد المحاولة لإكمالها.",alProc:"{x} عملية استرجاع قيد المعالجة.",alDup:"{x} دفعة مكررة مسجّلة.",alUnpaidS:"{x} محل بانتظار الدفع.",alUnpaidP:"{x} عطر بانتظار الدفع.",alOk:"كل شيء سليم. لا شيء يحتاج انتباهك.",
+tShopFee:"رسوم محل",tProdFee:"رسوم عطر",nonref:"غير قابلة للاسترجاع",rs_none:"لم تُسترجع",rs_processing:"قيد المعالجة",rs_refunded:"تم الاسترجاع",rs_failed:"فشلت",rs_stuck:"عالقة",
+rmShopT:"حذف هذا المحل؟",rmShopP:"سيتم حذف المحل وكل عطوره نهائياً.",rmProdT:"حذف هذا العطر؟",rmProdP:"سيتم حذفه نهائياً من المحل.",
+rShop:"المحل",rOwner:"المالك",rProds:"العطور",rItem:"العنصر",rPaid:"المبلغ المدفوع",rShopFee:"رسوم فتح المحل",rNet:"رسوم الشبكة",rRef:"المبلغ المسترجع للمالك",
+reasonL:"السبب",reasonReq:"يرجى كتابة السبب.",optional:"اختياري",
+rc1:"مخالفة للشروط",rc2:"محتوى غير لائق",rc3:"معلومات غير صحيحة",rc4:"إعلان مكرر",rc5:"بطلب من المالك",
+refT:"استرجاع هذه الدفعة؟",refP:"سيتم إرسال المبلغ إلى محفظة المالك.",resT:"استعادة هذا العنصر؟",resP:"سيظهر من جديد بعد دفع رسومه.",okRmRef:"حذف واسترجاع",delT:"حذف هذا العطر؟"},
+zh:{privacy:"隐私政策",terms:"使用条款",noRefShop:"已通过审核的店铺被下架时，开店费不予退还。",ltitle:"欢迎来到 Parfum",lsub:"使用 Pi 账号登录，探索全球香水店的香水。",login:"使用 Pi 继续",loginBusy:"登录中...",loginErr:"登录失败，请在 Pi Browser 中打开应用后重试。",lhint:"建议在 Pi Browser 中使用",tagline:"精品香水 · Pi",
+title:"来自四面八方的精品香水",sub:"浏览香水，然后直接联系店铺。",
+logout:"退出",navHome:"香水",navShops:"店铺",my:"我的店铺",openTab:"开店",adm:"管理",
+search:"搜索香水、品牌或店铺",allC:"所有国家",allR:"所有地区",perfumes:"款香水",shops:"家店铺",noneP:"没有匹配的香水。",noneS:"没有匹配的店铺。",
+ctaTitle:"您有香水店吗？",ctaText:"支付 {x} Pi 开店，向全球顾客展示您的香水。",ctaBtn:"开店",
+openTitle:"开设您的店铺",openText:"填写店铺信息，支付一次性 {x} Pi 提交审核，审核通过后即可上线。",perk1:"触达全球香水爱好者",perk2:"顾客直接联系您",perk3:"每款香水仅需 {x} Pi",
+openBtn:"开店 — {x} Pi",payBtn:"完成支付 — {x} Pi",unpaidNote:"信息已保存，完成支付即可提交审核。",refundedNote:"您的店铺未通过审核，付款已退还。请修改信息后重新支付以再次提交。",removedNote:"此店铺已被管理员下架。",
+pendingNote:"已收到您的付款。店铺正在审核中，管理员通过后将上线。您仍可在下方修改信息。",paidReview:"支付完成，店铺已进入审核。",
+shopTitle:"店铺信息",fname:"店铺名称",fcountry:"国家",fregion:"城市 / 地区",faddr:"地址",fphone:"电话",fhours:"营业时间",fdesc:"店铺简介",fimg:"店铺照片",saveShop:"保存修改",editShop:"编辑店铺",
+addProd:"添加商品 — {x} Pi",prodTitle:"添加香水",editTitle:"编辑香水",myProducts:"我的香水",pname:"香水名称",pbrand:"品牌",psize:"规格（如 50 ml）",pprice:"价格",pcur:"货币",pdesc:"描述",pimg:"商品图片",cancel:"取消",
+pay:"支付 {x} Pi",edit:"编辑",del:"删除",delC:"删除此商品？",saved:"已保存",paid:"支付完成，已发布！",cancelled:"支付已取消",upl:"上传中...",imgFirst:"请先上传图片。",fillAll:"请填写所有必填项。",
+st_unpaid:"待支付",st_pending:"审核中",st_live:"已上线",st_removed:"已下架",st_refunded:"已退款",note2:"备注",
+addr:"地址",tel:"电话",hrs:"营业时间",call:"致电店铺",viewShop:"查看店铺",prods:"香水",empty:"暂无内容。",
+note:"本应用仅为目录。购买请直接与店铺联系。",netErr:"无法连接服务器，请稍等一分钟后重试。",
+refNote:"店铺经管理员审核后上线。若被拒绝，开店费将退还并扣除 {x} Pi 网络手续费。香水上架费不可退款。",noRefProd:"香水上架费不可退款。",
+admShops:"店铺",admProds:"香水",admPays:"付款记录",admReview:"待审核",noPending:"没有待审核的店铺。",remove:"下架",restore:"恢复",refund:"退款",reason:"请填写将显示给店主的原因...",refunded:"退款已发送",dup:"重复",refFail:"已下架，但退款失败。请在付款记录中重试。",removedOk:"已下架",
+approve:"通过",reject:"拒绝",apvT:"通过此店铺？",apvP:"店铺将上线并对所有人可见。",apvOk:"店铺已通过并上线",
+rejT:"拒绝此店铺？",rejP:"店主将看到您填写的原因，开店费将退还到其钱包。",rejNote:"店主可修改信息后重新支付再次提交。",okReject:"拒绝并退款",rejOk:"店铺已被拒绝",refFail2:"退款失败，店铺仍在审核中。请再次点击拒绝重试。",
+admStats:"统计",admManage:"管理",stRefresh:"刷新",stUpdated:"更新于 {x}",
+stNet:"净收入",stCollected:"已收取",stRefundedL:"已退款",stLiveShops:"在线店铺",stPending:"待审核",stLiveProds:"在线香水",stOwners:"店主数",stAvg:"每店香水数",stPays:"付款笔数",stShopFees:"开店费",stProdFees:"香水上架费",stRefundedTo:"已退还店主",stKept:"已付网络手续费",stOf:"共 {x}",
+stActivity:"动态",pToday:"今天",p7:"近 7 天",p30:"近 30 天",pAll:"全部",stColl:"已收取",stNewShops:"新店铺",stNewProds:"新香水",
+stRev14:"已收取 — 近 14 天",stShops14:"新店铺 — 近 14 天",stTotal:"合计",stStatus:"状态概览",stCountries:"按国家（店铺 · 香水）",stTop:"香水最多的店铺",stAttn:"需要关注",stRecent:"最近付款",
+alPending:"{x} 家店铺等待您审核。请打开 管理 › 待审核。",alFail:"{x} 笔退款失败。请在 管理 › 付款记录 中重试。",alStuck:"{x} 笔退款卡住。请重试以完成。",alProc:"{x} 笔退款处理中。",alDup:"记录了 {x} 笔重复付款。",alUnpaidS:"{x} 家店铺待支付。",alUnpaidP:"{x} 款香水待支付。",alOk:"一切正常，暂无需要关注的事项。",
+tShopFee:"开店费",tProdFee:"上架费",nonref:"不可退款",rs_none:"未退款",rs_processing:"处理中",rs_refunded:"已退款",rs_failed:"失败",rs_stuck:"卡住",
+rmShopT:"删除此店铺？",rmShopP:"店铺及其所有香水将被永久删除。",rmProdT:"删除此香水？",rmProdP:"它将从店铺中永久删除。",
+rShop:"店铺",rOwner:"店主",rProds:"香水数",rItem:"项目",rPaid:"已付金额",rShopFee:"已付开店费",rNet:"网络手续费",rRef:"退还店主",
+reasonL:"原因",reasonReq:"请填写原因。",optional:"可选",
+rc1:"违反规则",rc2:"内容不当",rc3:"信息不实",rc4:"重复信息",rc5:"店主主动要求",
+refT:"确认退款？",refP:"退款将发送到店主的钱包。",resT:"恢复此项？",resP:"支付费用后将重新上线。",okRmRef:"删除并退款",delT:"删除此香水？"}
+};
+
+let L=LS.get("lang");
+if(!T[L])L=(navigator.language||"en").toLowerCase().startsWith("ar")?"ar":"en";
+let cfg={shopFee:5,productFee:.25,refundDeduct:.01,sandbox:false};
+let shops=[],prods=[],loaded=false,me=null,tok=null,mine=null,isAdmin=false,adm=null,stats=null,atab="stats";
+let view="home",img={shop:"",prod:""},editId=null,editSt="",paying=false,piReady=null;
+
+const $=id=>document.getElementById(id);
+const t=k=>(T[L]&&T[L][k])||T.en[k]||k;
+const f=(k,x)=>t(k).replace("{x}",x);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const cn=c=>{try{return new Intl.DisplayNames([L],{type:"region"}).of(c)}catch(e){return c}};
+const place=s=>[s.region,cn(s.country)].join(L==="ar"?"، ":", ");
+const num=n=>Number(n||0).toLocaleString("en",{minimumFractionDigits:2,maximumFractionDigits:2});
+const pf=n=>num(n)+" Pi";
+const PIN='<svg class="ic" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+const INFO='<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>';
+const skel=n=>Array.from({length:n},()=>'<div class="sk"></div>').join("");
+const liveShop=()=>!!(mine&&mine.shop&&mine.shop.status==="live");
+const pendingShop=()=>!!(mine&&mine.shop&&mine.shop.status==="pending");
+function toast(m){const e=$("toast");e.textContent=m;e.classList.remove("hide");clearTimeout(toast.x);toast.x=setTimeout(()=>e.classList.add("hide"),5000)}
+
+async function api(p,d={},a=true){
+  const body=a&&me?{...d,userUid:me.uid,accessToken:tok}:d;
+  let r;
+  try{r=await fetch(API+p,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})}
+  catch(e){throw new Error(t("netErr"))}
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(j.error||"Error");
+  return j;
+}
+
+/* ================= اللغة ================= */
+function renderTexts(){
+  $("ctaText").textContent=f("ctaText",cfg.shopFee);
+  $("openText").textContent=f("openText",cfg.shopFee);
+  $("perk3").textContent=f("perk3",cfg.productFee);
+  $("feeChip").textContent=cfg.shopFee+" Pi";
+  $("refNote").textContent=f("refNote",cfg.refundDeduct);
+  $("addProdBtn").textContent=f("addProd",cfg.productFee);
+}
+function setLang(l){
+  L=l;LS.set("lang",l);
+  document.documentElement.lang=l;document.documentElement.dir=l==="ar"?"rtl":"ltr";
+  document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));
+  document.querySelectorAll("[data-p]").forEach(e=>e.placeholder=t(e.dataset.p));
+  document.querySelectorAll("[data-l]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===l));
+  const sc=$("sc"),v=sc.value;
+  sc.innerHTML=[...CODES].sort((a,b)=>cn(a).localeCompare(cn(b),L)).map(c=>`<option value="${c}">${esc(cn(c))}</option>`).join("");sc.value=v||"DZ";
+  renderTexts();buildFilters();renderAll();
+}
+function renderAll(){renderProducts();renderShops();renderMy();renderNav();renderAdmin();renderCta()}
+
+/* ================= تحميل العطور والمحلات ================= */
+async function loadShops(){
+  try{
+    const r=await fetch(API+"/api/shops");
+    shops=(await r.json()).shops||[];
+    loaded=true;
+  }catch(e){toast(t("netErr"))}
+  prods=shops.flatMap(s=>s.products.map(p=>({...p,shop:s}))).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  buildFilters();renderProducts();renderShops();
+}
+function buildFilters(){
+  const fc=$("fc"),cv=fc.value,rv=$("fr").value;
+  const cs=[...new Set(shops.map(s=>s.country))].sort((a,b)=>cn(a).localeCompare(cn(b),L));
+  fc.innerHTML=`<option value="">${esc(t("allC"))}</option>`+cs.map(c=>`<option value="${c}">${esc(cn(c))}</option>`).join("");
+  fc.value=cs.includes(cv)?cv:"";buildRegions(rv);
+}
+function buildRegions(keep){
+  const fr=$("fr"),c=$("fc").value;
+  const rs=[...new Set(shops.filter(s=>!c||s.country===c).map(s=>s.region))].sort((a,b)=>a.localeCompare(b,L));
+  fr.innerHTML=`<option value="">${esc(t("allR"))}</option>`+rs.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join("");
+  fr.value=rs.includes(keep)?keep:"";
+}
+const filt=()=>({q:$("q").value.trim().toLowerCase(),c:$("fc").value,r:$("fr").value});
+
+const pcard=p=>`<article class="pc" data-pid="${esc(p.id)}"><div class="pi"><img src="${esc(p.image)}" alt="" loading="lazy"><span class="price" dir="ltr">${esc(p.price)} ${esc(p.currency)}</span></div><div class="pb"><h3 class="disp">${esc(p.name)}</h3><div class="mut">${esc([p.brand,p.size].filter(Boolean).join(" · "))}</div><div class="ps">${PIN}${esc(p.shop.name)} · ${esc(p.shop.region)}</div></div></article>`;
+const scard=s=>`<article class="sc" data-sid="${esc(s.id)}"><img src="${esc(s.image)}" alt="" loading="lazy"><div class="sb"><h3 class="disp">${esc(s.name)}</h3><div class="loc">${PIN}${esc(place(s))}</div><div class="mut">${s.products.length} ${esc(t("perfumes"))}</div></div></article>`;
+
+function renderProducts(){
+  const g=$("pgrid");
+  if(!loaded){g.innerHTML=skel(8);$("cnt").textContent="";return}
+  const {q,c,r}=filt();
+  const list=prods.filter(p=>(!c||p.shop.country===c)&&(!r||p.shop.region===r)&&(!q||(p.name+" "+p.brand+" "+p.shop.name).toLowerCase().includes(q)));
+  $("cnt").textContent=list.length+" "+t("perfumes");
+  g.innerHTML=list.length?list.map(pcard).join(""):`<p class="mut empty">${esc(t("noneP"))}</p>`;
+}
+function renderShops(){
+  const g=$("sgrid");
+  if(!loaded){g.innerHTML=skel(4);$("scnt").textContent="";return}
+  const {q,c,r}=filt();
+  const list=shops.filter(s=>(!c||s.country===c)&&(!r||s.region===r)&&(!q||(s.name+" "+s.products.map(p=>p.name+" "+p.brand).join(" ")).toLowerCase().includes(q)))
+    .sort((a,b)=>cn(a.country).localeCompare(cn(b.country),L)||a.region.localeCompare(b.region,L)||a.name.localeCompare(b.name,L));
+  $("scnt").textContent=list.length+" "+t("shops");
+  g.innerHTML=list.length?list.map(scard).join(""):`<p class="mut empty">${esc(t("noneS"))}</p>`;
+}
+
+/* ================= النوافذ ================= */
+function openM(h){$("md").innerHTML=h;$("ov").hidden=false;$("md").scrollTop=0;document.body.style.overflow="hidden"}
+function closeM(){$("ov").hidden=true;document.body.style.overflow=""}
+const telOf=s=>String(s).replace(/[^\d+]/g,"");
+
+function openProduct(id){
+  const p=prods.find(x=>x.id===id);if(!p)return;const s=p.shop;
+  openM(`<button class="x" data-close aria-label="close">✕</button><img class="mi" src="${esc(p.image)}" alt="">
+  <div class="mb"><h2 class="disp h2">${esc(p.name)}</h2><div class="mut">${esc([p.brand,p.size].filter(Boolean).join(" · "))}</div>
+  <div class="pr" dir="ltr">${esc(p.price)} ${esc(p.currency)}</div>
+  ${p.description?`<p class="desc">${esc(p.description)}</p>`:""}
+  <div class="sbox"><b class="disp" style="font-size:22px">${esc(s.name)}</b><div class="loc">${PIN}${esc(place(s))}</div><div class="mut">${esc(s.address)}</div></div>
+  <div class="row"><a class="btn" style="flex:1" href="tel:${esc(telOf(s.phone))}">${esc(t("call"))}</a><button class="btn alt" data-sid="${esc(s.id)}">${esc(t("viewShop"))}</button></div></div>`);
+}
+function openShop(id){
+  const s=shops.find(x=>x.id===id);if(!s)return;
+  openM(`<button class="x" data-close aria-label="close">✕</button><img class="mi" src="${esc(s.image)}" alt="">
+  <div class="mb"><h2 class="disp h2">${esc(s.name)}</h2><div class="loc">${PIN}${esc(place(s))}</div>
+  ${s.description?`<p class="desc">${esc(s.description)}</p>`:""}
+  <div class="line"><span>${esc(t("addr"))}</span><span>${esc(s.address)}</span></div>
+  <div class="line"><span>${esc(t("tel"))}</span><a dir="ltr" href="tel:${esc(telOf(s.phone))}">${esc(s.phone)}</a></div>
+  ${s.hours?`<div class="line"><span>${esc(t("hrs"))}</span><span dir="ltr">${esc(s.hours)}</span></div>`:""}
+  <a class="btn big" style="margin-top:14px" href="tel:${esc(telOf(s.phone))}">${esc(t("call"))}</a>
+  <h3 class="disp h3">${esc(t("prods"))}</h3>
+  <div class="grid">${s.products.map(p=>pcard({...p,shop:s})).join("")||`<p class="mut empty">${esc(t("empty"))}</p>`}</div></div>`);
+}
+
+/* ================= التنقل ================= */
+const V={home:"vHome",shops:"vShops",my:"vMy",adm:"vAdm"};
+function go(v){
+  if(v==="adm"&&!isAdmin)v="home";
+  view=v;closeM();
+  Object.keys(V).forEach(k=>$(V[k]).classList.toggle("hide",k!==v));
+  document.querySelectorAll("[data-go]").forEach(b=>{if(b.closest(".bn"))b.classList.toggle("on",b.dataset.go===v)});
+  $("filters").classList.toggle("hide",!(v==="home"||v==="shops"));
+  renderCta();
+  if(v==="my"&&me)refreshMe().catch(()=>{});
+  if(v==="adm")loadAdmin();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function renderNav(){$("navMyL").textContent=(liveShop()||pendingShop())?t("my"):t("openTab")}
+function renderCta(){$("cta").classList.toggle("hide",!(me&&mine&&view==="home"&&!liveShop()&&!pendingShop()))}
+
+/* ================= الدخول ================= */
+function onIncomplete(p){
+  const tx=p.transaction&&p.transaction.txid;
+  if(tx)api("/api/pay/complete",{paymentId:p.identifier,txid:tx},false)
+    .then(()=>{setTimeout(()=>{if(me)refreshMe().catch(()=>{});loadShops()},1500)}).catch(()=>{});
+}
+async function login(auto){
+  const btn=$("loginBtn");btn.disabled=true;$("loginMsg").textContent=t("loginBusy");
+  try{
+    await piReady;
+    if(typeof Pi==="undefined")throw new Error("no pi");
+    /* نطلب wallet_address ليتمكن السيرفر من الاسترجاع */
+    const a=await Pi.authenticate(SCOPES,onIncomplete);
+    me=a.user;tok=a.accessToken;
+  }catch(e){
+    btn.disabled=false;$("loginMsg").textContent=auto?"":t("loginErr");return;
+  }
+  LS.set("auto","1");
+  $("login").classList.add("hide");$("app").classList.remove("hide");
+  $("who").textContent="@"+me.username;
+  go("home");
+  refreshMe().catch(e=>toast(e.message));
+}
+function logout(){
+  me=null;tok=null;mine=null;isAdmin=false;adm=null;stats=null;renderMy.filled=false;
+  LS.del("auto");
+  $("admTab").classList.add("hide");
+  $("app").classList.add("hide");$("login").classList.remove("hide");
+  $("loginBtn").disabled=false;$("loginMsg").textContent="";
+}
+async function refreshMe(){
+  const j=await api("/api/me");
+  mine={shop:j.shop,products:j.products};isAdmin=j.isAdmin;
+  $("admTab").classList.toggle("hide",!isAdmin);
+  renderMy();renderNav();renderCta();
+}
+
+/* ================= محلي ================= */
+const stBadge=s=>`<span class="badge ${esc(s)}">${esc(t("st_"+s))}</span>`;
+function fillShop(){
+  const s=mine&&mine.shop;if(!s)return;
+  $("sn").value=s.name||"";$("sc").value=s.country||"DZ";$("sr").value=s.region||"";$("sa").value=s.address||"";
+  $("sp").value=s.phone||"";$("sh").value=s.hours||"";$("sd").value=s.description||"";
+  img.shop=s.image||"";if(s.image){$("spv").src=s.image;$("spv").classList.remove("hide")}
+}
+function resetShopForm(){
+  ["sn","sr","sa","sp","sh","sd"].forEach(i=>{$(i).value=""});
+  $("sc").value="DZ";$("sf").value="";
+  img.shop="";$("spv").removeAttribute("src");$("spv").classList.add("hide");
+  hideProd();
+}
+function ownCard(p){
+  const unpaid=p.status==="unpaid",rem=p.status==="removed";
+  return `<article class="pc"><div class="pi"><img src="${esc(p.image)}" alt="" loading="lazy"><span class="price" dir="ltr">${esc(p.price)} ${esc(p.currency)}</span></div><div class="pb"><h3 class="disp">${esc(p.name)}</h3><div class="mut">${esc([p.brand,p.size].filter(Boolean).join(" · "))}</div><div style="margin:6px 0">${stBadge(p.status)}</div>${p.reviewMessage?`<div class="mut">${esc(t("note2"))}: ${esc(p.reviewMessage)}</div>`:""}<div class="row" style="margin-top:6px">${unpaid?`<button class="btn sm" data-payp="${esc(p.id)}">${esc(f("pay",cfg.productFee))}</button>`:""}${rem?"":`<button class="btn alt sm" data-edit="${esc(p.id)}">${esc(t("edit"))}</button>`}<button class="btn alt sm" data-del="${esc(p.id)}">${esc(t("del"))}</button></div></div></article>`;
+}
+function renderMy(){
+  if(!me||!mine)return;
+  const s=mine.shop,live=liveShop(),pend=pendingShop();
+  $("openView").classList.toggle("hide",live);$("dashView").classList.toggle("hide",!live);
+  /* أثناء المراجعة نخفي بطاقة العرض ونُبقي النموذج للتعديل */
+  $("openCard").classList.toggle("hide",pend);
+  if(s&&!renderMy.filled){fillShop();renderMy.filled=true}
+  /* إذا حُذف المحل نهائياً: يبدأ النموذج فارغاً من جديد */
+  if(!s&&renderMy.filled){resetShopForm();renderMy.filled=false}
+  /* نقل نموذج المحل بين صفحة الفتح ولوحة المحل */
+  const slot=live?$("editSlot"):$("openSlot"),form=$("shopForm");
+  if(form.parentElement!==slot){slot.appendChild(form);form.classList.toggle("hide",live)}
+  const st=s&&s.status;
+  let m="";
+  if(st==="unpaid")m=`<div class="warn">${esc(t("unpaidNote"))}</div>`;
+  if(st==="pending")m=`<div class="warn">${esc(t("pendingNote"))}</div>`;
+  if(st==="refunded")m=`<div class="warn">${esc(t("refundedNote"))}${s.reviewMessage?" "+esc(t("reasonL"))+": "+esc(s.reviewMessage):""}</div>`;
+  if(st==="removed")m=`<div class="warn">${esc(t("removedNote"))} ${esc(s.reviewMessage||"")}</div>`;
+  $("shopMsg").innerHTML=m;
+  $("saveShop").classList.toggle("hide",st==="removed");
+  $("saveShop").textContent=(live||pend)?t("saveShop"):(st==="unpaid"?f("payBtn",cfg.shopFee):f("openBtn",cfg.shopFee));
+  if(live){
+    $("banner").innerHTML=`<img src="${esc(s.image)}" alt=""><button class="btn alt sm ed" data-act="editShop">${esc(t("editShop"))}</button><div class="bi"><span class="badge live">${esc(t("st_live"))}</span><h2 class="disp">${esc(s.name)}</h2><div>${PIN}${esc(place(s))}</div><div style="opacity:.8;font-size:14px">${mine.products.length} ${esc(t("perfumes"))}</div></div>`;
+    $("mgrid").innerHTML=mine.products.length?mine.products.map(ownCard).join(""):`<p class="mut empty">${esc(t("empty"))}</p>`;
+    $("addProdBtn").textContent=f("addProd",cfg.productFee);
+  }
+}
+
+/* ---------- رفع الصور (مع تصغيرها تلقائياً) ---------- */
+async function shrink(file){
+  const url=URL.createObjectURL(file);
+  try{
+    const im=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=url});
+    const k=Math.min(1,1280/Math.max(im.width,im.height));
+    const c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+    const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);
+    return c.toDataURL("image/jpeg",.85);
+  }finally{URL.revokeObjectURL(url)}
+}
+async function upload(inp,key,pv){
+  const file=inp.files[0];if(!file)return;
+  toast(t("upl"));
+  try{
+    const d=await shrink(file);
+    const j=await api("/api/upload",{file:d});
+    img[key]=j.url;pv.src=j.url;pv.classList.remove("hide");toast("✓");
+  }catch(e){toast(e.message||"Error")}
+}
+
+/* ---------- المحل: حفظ ثم دفع 5 Pi (بعدها يذهب للمراجعة) ---------- */
+async function submitShop(){
+  const d={name:$("sn").value,country:$("sc").value,region:$("sr").value,address:$("sa").value,phone:$("sp").value,hours:$("sh").value,description:$("sd").value,image:img.shop};
+  if(!d.name.trim()||!d.region.trim()||!d.address.trim()||!d.phone.trim())return toast(t("fillAll"));
+  if(!d.image)return toast(t("imgFirst"));
+  const live=liveShop(),pend=pendingShop(),b=$("saveShop");b.disabled=true;
+  try{
+    await api("/api/shop/save",d);
+    renderMy.filled=false;
+    await refreshMe();
+    if(live){toast(t("saved"));$("shopForm").classList.add("hide")}
+    else if(pend)toast(t("saved"));
+    else pay("shop_fee",me.uid);
+  }catch(e){toast(e.message)}finally{b.disabled=false}
+}
+
+/* ---------- المنتجات ---------- */
+function showProd(id){
+  const p=id?mine.products.find(x=>x.id===id):null;
+  editId=p?p.id:null;editSt=p?p.status:"";
+  $("pn").value=p?p.name:"";$("pb").value=p?p.brand||"":"";$("ps").value=p?p.size||"":"";
+  $("pp").value=p?p.price:"";$("pc").value=(p&&["Pi","OUSD"].includes(p.currency))?p.currency:"Pi";$("pd").value=p?p.description||"":"";
+  $("pf").value="";img.prod=p?p.image:"";
+  if(p&&p.image){$("ppv").src=p.image;$("ppv").classList.remove("hide")}else $("ppv").classList.add("hide");
+  $("prodTitle").textContent=t(p?"editTitle":"prodTitle");
+  const needPay=!p||p.status==="unpaid"||p.status==="refunded";
+  $("saveProd").textContent=!p?f("addProd",cfg.productFee):(needPay?f("payBtn",cfg.productFee):t("saveShop"));
+  $("prodFormCard").classList.remove("hide");
+  $("prodFormCard").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function hideProd(){editId=null;editSt="";$("prodFormCard").classList.add("hide")}
+async function submitProd(){
+  const d={id:editId,name:$("pn").value,brand:$("pb").value,size:$("ps").value,price:$("pp").value,currency:$("pc").value,description:$("pd").value,image:img.prod};
+  if(!d.name.trim()||!(Number(d.price)>0)||!d.currency.trim())return toast(t("fillAll"));
+  if(!d.image)return toast(t("imgFirst"));
+  const needPay=!editId||editSt==="unpaid"||editSt==="refunded",b=$("saveProd");b.disabled=true;
+  try{
+    const j=await api("/api/product/save",d);
+    hideProd();img.prod="";
+    await refreshMe();
+    if(needPay)pay("product_fee",j.id);else toast(t("saved"));
+  }catch(e){toast(e.message)}finally{b.disabled=false}
+}
+
+/* ================= نافذة تأكيد مخصصة (بديل confirm و prompt) =================
+   خيارات: kind (danger | gold | ok) · icon (trash | refund | restore | check) · title · text
+           rows: [[التسمية, القيمة, مميّز؟], ...] · note · input (نص بديل لخانة السبب)
+           optional (السبب اختياري) · chips (اقتراحات سريعة للسبب) · ok (نص زر التأكيد)
+   بدون input: ترجع true/false.  مع input: ترجع النص أو null عند الإلغاء */
+const OKL={en:"Confirm",ar:"تأكيد",zh:"确认"};
+const ICONS={
+  trash:'<svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
+  refund:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.2c-.5-.8-1.4-1.2-2.5-1.2-1.5 0-2.5.7-2.5 1.8s1 1.5 2.5 1.8 2.5.8 2.5 1.8-1 1.8-2.5 1.8c-1.1 0-2-.4-2.5-1.2M12 6.5V8M12 16v1.5"/></svg>',
+  restore:'<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>',
+  check:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>'
+};
+function dlg(o){
+  return new Promise(res=>{
+    const ov=$("dlg"),box=$("dlgBox"),prev=document.activeElement;
+    const kind=o.kind||(o.danger?"danger":"gold");
+    box.className="dbox"+(kind==="danger"?" dng":"");
+    const rows=(o.rows||[]).map(r=>`<div class="dr${r[2]?" hl":""}"><span>${esc(r[0])}</span><b dir="auto">${esc(r[1])}</b></div>`).join("");
+    const chips=(o.chips||[]).map((c,i)=>`<button type="button" class="dchip" data-ci="${i}">${esc(c)}</button>`).join("");
+    box.innerHTML=
+      `<div class="dic ${kind}">${ICONS[o.icon||"refund"]}</div>`+
+      `<div class="dt disp">${esc(o.title||"")}</div>`+
+      (o.text?`<p class="dp">${esc(o.text)}</p>`:"")+
+      (rows?`<div class="dsum">${rows}</div>`:"")+
+      (o.note?`<div class="dnote">${INFO}<span>${esc(o.note)}</span></div>`:"")+
+      (o.input?`<div class="dl"><span>${esc(t("reasonL"))}${o.optional?` <em>(${esc(t("optional"))})</em>`:""}</span><span class="dcnt" id="dCnt" dir="ltr">0/300</span></div>`+
+        (chips?`<div class="dchips">${chips}</div>`:"")+
+        `<textarea id="dlgIn" rows="3" maxlength="300" placeholder="${esc(o.input)}"></textarea><div class="derr" id="dErr"></div>`:"")+
+      `<div class="dbtn"><button class="btn alt" id="dlgNo">${esc(t("cancel"))}</button><button class="btn${kind==="danger"?" danger":""}" id="dlgOk">${esc(o.ok||OKL[L]||OKL.en)}</button></div>`;
+    ov.hidden=false;document.body.style.overflow="hidden";
+    const inp=$("dlgIn"),no=o.input?null:false;
+    if(inp){
+      const cnt=$("dCnt"),err=$("dErr");
+      const sync=()=>{
+        cnt.textContent=inp.value.length+"/300";
+        box.querySelectorAll(".dchip").forEach(b=>b.classList.toggle("on",(o.chips||[])[b.dataset.ci]===inp.value));
+      };
+      inp.addEventListener("input",()=>{inp.classList.remove("bad");err.textContent="";sync()});
+      box.querySelectorAll(".dchip").forEach(b=>b.onclick=()=>{inp.value=o.chips[b.dataset.ci];inp.classList.remove("bad");err.textContent="";sync();inp.focus()});
+      setTimeout(()=>inp.focus(),80);
+    }
+    const fin=v=>{ov.hidden=true;ov.onclick=null;document.body.style.overflow="";document.removeEventListener("keydown",key,true);try{prev&&prev.focus&&prev.focus()}catch(e){}res(v)};
+    const yes=()=>{
+      if(inp){
+        const v=inp.value.trim();
+        if(!v&&!o.optional){inp.classList.add("bad");$("dErr").textContent=t("reasonReq");inp.focus();return}
+        fin(v)
+      }else fin(true)
+    };
+    const key=e=>{
+      if(e.key==="Escape"){e.stopPropagation();fin(no)}
+      else if(e.key==="Enter"&&(!inp||e.ctrlKey||e.metaKey)){e.preventDefault();yes()}
+    };
+    document.addEventListener("keydown",key,true);
+    $("dlgOk").onclick=yes;
+    $("dlgNo").onclick=()=>fin(no);
+    ov.onclick=e=>{if(e.target===ov)fin(no)};
+  });
+}
+
+async function delProd(id){
+  if(!await dlg({kind:"danger",icon:"trash",title:t("delT"),text:t("delC"),note:t("noRefProd"),ok:t("del")}))return;
+  try{await api("/api/product/delete",{id});await refreshMe();loadShops()}catch(e){toast(e.message)}
+}
+
+/* ================= الدفع ================= */
+function pay(type,id){
+  if(paying)return;
+  if(typeof Pi==="undefined")return toast(t("loginErr"));
+  const amount=type==="shop_fee"?cfg.shopFee:cfg.productFee;
+  paying=true;const done=()=>{paying=false};
+  try{
+    Pi.createPayment({amount,memo:"Parfum "+(type==="shop_fee"?"shop":"product"),metadata:{type,targetId:id}},{
+      onReadyForServerApproval:pid=>api("/api/pay/approve",{paymentId:pid},false).catch(e=>{done();toast(e.message)}),
+      onReadyForServerCompletion:(pid,tx)=>api("/api/pay/complete",{paymentId:pid,txid:tx},false)
+        .then(async()=>{done();toast(t(type==="shop_fee"?"paidReview":"paid"));await refreshMe();await loadShops()})
+        .catch(e=>{done();toast(e.message)}),
+      onCancel:()=>{done();toast(t("cancelled"))},
+      onError:e=>{done();toast((e&&e.message)||"Error")}
+    });
+  }catch(e){done();toast((e&&e.message)||"Error")}
+}
+
+/* ================= الإدارة ================= */
+async function loadAdmin(force){
+  const [a,s]=await Promise.allSettled([
+    api("/api/admin/list"),
+    api("/api/admin/stats",{tz:new Date().getTimezoneOffset(),force:!!force})
+  ]);
+  if(a.status==="fulfilled")adm=a.value;else toast(a.reason.message);
+  if(s.status==="fulfilled")stats=s.value;else if(a.status==="fulfilled")toast(s.reason.message);
+  renderAdmin();
+}
+function setATab(k){
+  atab=k;
+  document.querySelectorAll("[data-atab]").forEach(b=>b.classList.toggle("on",b.dataset.atab===k));
+  $("aStats").classList.toggle("hide",k!=="stats");
+  $("aManage").classList.toggle("hide",k!=="manage");
+}
+
+const dFmt=ts=>new Date(ts).toLocaleString(L==="zh"?"zh-CN":L==="ar"?"ar-u-nu-latn":"en-GB",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+const refBadge=x=>x.type==="product_fee"?`<span class="badge">${esc(t("nonref"))}</span>`:`<span class="badge">${esc(t("rs_"+x.refundStatus))}</span>`;
+
+function renderStats(){
+  const box=$("aStats");
+  if(!stats){box.innerHTML=`<div class="kpis">${'<div class="sk" style="aspect-ratio:auto;height:88px"></div>'.repeat(6)}</div>`;return}
+  const s=stats,m=s.money,a=s.alerts;
+  const P=n=>`<span dir="ltr">${esc(pf(n))}</span>`,N=n=>`<span dir="ltr">${esc(n)}</span>`;
+  const kpi=(l,v,sub,cls)=>`<div class="kpi${cls?" "+cls:""}"><span>${esc(l)}</span><b>${v}</b>${sub?`<small>${sub}</small>`:""}</div>`;
+  const avg=s.shops.live?s.products.live/s.shops.live:0;
+
+  /* الصافي = المحصّل − المسترجع − رسوم الشبكة المدفوعة */
+  const kpis=
+    kpi(t("stNet"),P(m.net),`${esc(t("stCollected"))} ${P(m.collected)} · ${esc(t("stRefundedL"))} ${P(m.refunded)} · ${esc(t("stKept"))} ${P(m.kept)}`,"main")+
+    kpi(t("stLiveShops"),N(s.shops.live),esc(f("stOf",s.shops.total)))+
+    kpi(t("stPending"),N(s.shops.pending||0))+
+    kpi(t("stLiveProds"),N(s.products.live),esc(f("stOf",s.products.total)))+
+    kpi(t("stOwners"),N(s.owners))+
+    kpi(t("stAvg"),N(avg.toFixed(1)))+
+    kpi(t("stShopFees"),P(m.shopFees))+
+    kpi(t("stProdFees"),P(m.productFees),esc(t("nonref")))+
+    kpi(t("stRefundedTo"),P(m.refunded),`${esc(t("stKept"))} ${P(m.kept)}`)+
+    kpi(t("stPays"),N(s.payments.total));
+
+  const per=[["pToday","today"],["p7","d7"],["p30","d30"],["pAll","all"]].map(([lk,k])=>{
+    const x=s.periods[k];
+    return `<tr><td>${esc(t(lk))}</td><td>${P(x.revenue)}</td><td>${N(x.shops)}</td><td>${N(x.products)}</td></tr>`;
+  }).join("");
+  const periods=`<div class="card"><h2 class="disp sttl">${esc(t("stActivity"))}</h2><div class="tw"><table class="tb"><thead><tr><th></th><th>${esc(t("stColl"))}</th><th>${esc(t("stNewShops"))}</th><th>${esc(t("stNewProds"))}</th></tr></thead><tbody>${per}</tbody></table></div></div>`;
+
+  const bars=(vals,money)=>{
+    const mx=Math.max(0,...vals)||1;
+    return `<div class="bars" dir="ltr">${vals.map((v,i)=>`<div class="bc" title="${esc(s.days[i]+" · "+(money?pf(v):v))}"><div class="bt"><i style="height:${v>0?Math.max(5,v/mx*100):0}%"></i></div><em>${esc(s.days[i].slice(8))}</em></div>`).join("")}</div>`;
+  };
+  const sum=a=>a.reduce((x,y)=>x+y,0);
+  const charts=`<div class="two">
+    <div class="card"><h2 class="disp sttl">${esc(t("stRev14"))}</h2><div class="mut">${esc(t("stTotal"))}: ${P(sum(s.revDay))}</div>${bars(s.revDay,true)}</div>
+    <div class="card"><h2 class="disp sttl">${esc(t("stShops14"))}</h2><div class="mut">${esc(t("stTotal"))}: ${N(sum(s.shopsDay))}</div>${bars(s.shopsDay,false)}</div></div>`;
+
+  const bd=o=>["live","pending","unpaid","removed","refunded"].filter(k=>k==="live"||k==="unpaid"||k==="removed"||o[k]>0)
+    .map(k=>`<span class="badge ${k}">${esc(t("st_"+k))} · ${o[k]||0}</span>`).join("");
+  const status=`<div class="card"><h2 class="disp sttl">${esc(t("stStatus"))}</h2>
+    <div class="mut">${esc(t("admShops"))}</div><div class="badges">${bd(s.shops)}</div>
+    <div class="mut">${esc(t("admProds"))}</div><div class="badges">${bd(s.products)}</div></div>`;
+
+  const cmax=Math.max(1,...s.countries.map(c=>c.shops));
+  const ctry=s.countries.length?s.countries.map(c=>`<div class="hb"><span>${esc(c.code==="--"?"—":cn(c.code))}</span><div class="tr"><i style="width:${Math.max(4,c.shops/cmax*100)}%"></i></div><b dir="ltr">${c.shops} · ${c.products}</b></div>`).join(""):`<p class="mut">${esc(t("empty"))}</p>`;
+  const top=s.topShops.length?s.topShops.map(x=>`<div class="line"><span><b>${esc(x.name)}</b><br><span class="mut">${esc(cn(x.country))}</span></span><span class="badge">${x.products} ${esc(t("perfumes"))}</span></div>`).join(""):`<p class="mut">${esc(t("empty"))}</p>`;
+  const geo=`<div class="two"><div class="card"><h2 class="disp sttl">${esc(t("stCountries"))}</h2>${ctry}</div><div class="card"><h2 class="disp sttl">${esc(t("stTop"))}</h2>${top}</div></div>`;
+
+  const al=[];
+  if(a.pendingShops)al.push(f("alPending",a.pendingShops));
+  if(a.failedRefunds)al.push(f("alFail",a.failedRefunds));
+  if(a.stuckRefunds)al.push(f("alStuck",a.stuckRefunds));
+  if(a.processing)al.push(f("alProc",a.processing));
+  if(a.duplicates)al.push(f("alDup",a.duplicates));
+  if(a.unpaidShops)al.push(f("alUnpaidS",a.unpaidShops));
+  if(a.unpaidProducts)al.push(f("alUnpaidP",a.unpaidProducts));
+  const attn=`<div class="card"><h2 class="disp sttl">${esc(t("stAttn"))}</h2>${al.length?al.map(x=>`<div class="al warn">${esc(x)}</div>`).join(""):`<div class="al okk">${esc(t("alOk"))}</div>`}</div>`;
+
+  const rec=s.recent.length?s.recent.map(x=>`<div class="line"><span><b>${esc(x.name)}</b><br><span class="mut">${esc(t(x.type==="shop_fee"?"tShopFee":"tProdFee"))} · ${esc(dFmt(x.paidAt))}</span></span><span style="text-align:end"><b dir="ltr">${esc(pf(x.amount))}</b><br>${refBadge(x)}</span></div>`).join(""):`<p class="mut">${esc(t("empty"))}</p>`;
+  const recent=`<div class="card"><h2 class="disp sttl">${esc(t("stRecent"))}</h2>${rec}</div>`;
+
+  const head=`<div class="sthead"><span class="mut">${esc(f("stUpdated",new Date(s.at).toLocaleTimeString(L==="zh"?"zh-CN":L==="ar"?"ar-u-nu-latn":"en-GB",{hour:"2-digit",minute:"2-digit"})))}</span><button class="btn alt sm" data-act="statsRefresh">${esc(t("stRefresh"))}</button></div>`;
+
+  box.innerHTML=head+`<div class="kpis">${kpis}</div>`+attn+periods+charts+status+geo+recent;
+}
+
+function renderAdmin(){
+  renderStats();
+  if(!adm)return;
+  const none=`<p class="mut">${esc(t("empty"))}</p>`;
+  const row=(type,x)=>`<div class="line"><span class="ls">${x.image?`<img class="th" src="${esc(x.image)}" alt="">`:""}<span><b>${esc(x.name)}</b> ${stBadge(x.status)}<br><span class="mut">${type==="shop"?esc(x.region+", "+x.country)+" · @"+esc(x.ownerUsername):esc(x.shopName)+" · "+esc(x.price)+" "+esc(x.currency)}</span></span></span><span class="row">${type==="shop"&&x.status==="pending"?`<button class="btn sm" data-rev="approve" data-id="${esc(x.id)}">${esc(t("approve"))}</button>`:""}<button class="btn alt sm" data-mod="${x.status==="removed"?"restore":"remove"}" data-type="${type}" data-id="${esc(x.id)}">${esc(t(x.status==="removed"?"restore":"remove"))}</button></span></div>`;
+  /* المحلات التي دفعت وتنتظر قرار الأدمن (قبول / رفض مع استرجاع) */
+  const rv=x=>`<div class="rv"><img class="rvi" src="${esc(x.image)}" alt=""><div class="rvb"><b class="disp" style="font-size:22px">${esc(x.name)}</b> ${stBadge(x.status)}<div class="loc">${PIN}${esc(place(x))}</div><div class="mut">@${esc(x.ownerUsername)}</div><div class="mut">${esc(x.address||"")}</div><div class="mut" dir="ltr">${esc([x.phone,x.hours].filter(Boolean).join(" · "))}</div>${x.description?`<div class="desc mut">${esc(x.description)}</div>`:""}<div class="row"><button class="btn sm" data-rev="approve" data-id="${esc(x.id)}">${esc(t("approve"))}</button><button class="btn alt sm" data-rev="reject" data-id="${esc(x.id)}">${esc(t("reject"))}</button></div></div></div>`;
+  $("aReview").innerHTML=adm.shops.filter(x=>x.status==="pending").map(rv).join("")||`<p class="mut">${esc(t("noPending"))}</p>`;
+  $("aShops").innerHTML=adm.shops.map(x=>row("shop",x)).join("")||none;
+  $("aProds").innerHTML=adm.products.map(x=>row("product",x)).join("")||none;
+  /* الاسترجاع متاح فقط لرسوم فتح المحل بعد حذفه. رسوم المنتجات غير قابلة للاسترجاع */
+  const canRef=x=>x.type==="shop_fee"&&x.targetStatus==="removed"&&["none","failed","stuck"].includes(x.refundStatus);
+  $("aPays").innerHTML=adm.payments.map(x=>`<div class="line"><span>${esc(x.targetName)} <span class="mut" dir="ltr">${esc(x.amount)} Pi · ${esc(x.type)}</span> ${refBadge(x)}${x.duplicate?` <span class="badge unpaid">${esc(t("dup"))}</span>`:""}${x.lastError&&x.refundStatus!=="refunded"?`<br><span class="mut" style="font-size:12px" dir="ltr">${esc(String(x.lastError).slice(0,140))}</span>`:""}</span>${canRef(x)?`<button class="btn alt sm" data-rf="${esc(x.id)}">${esc(t("refund"))}</button>`:""}</div>`).join("")||none;
+}
+
+/* خيارات نافذة الحذف (محل: يسترجع رسوم فتحه فقط · منتج: بدون استرجاع) */
+function removeOpts(type,id){
+  const chips=[t("rc1"),t("rc2"),t("rc3"),t("rc4"),t("rc5")];
+  if(type==="shop"){
+    const x=adm.shops.find(z=>z.id===id)||{};
+    const n=adm.products.filter(p=>p.shopId===id).length;
+    const pay=adm.payments.find(p=>p.type==="shop_fee"&&p.targetId===id&&["none","failed","stuck"].includes(p.refundStatus));
+    const refundable=x.status==="pending";
+    const paid=refundable?(pay?Number(pay.amount):cfg.shopFee):0;
+    const rows=[[t("rShop"),x.name||""],[t("rOwner"),"@"+(x.ownerUsername||"")],[t("rProds"),String(n)]];
+    if(paid>0)rows.push([t("rShopFee"),pf(paid)],[t("rNet"),"− "+pf(cfg.refundDeduct)],[t("rRef"),pf(Math.max(0,paid-cfg.refundDeduct)),true]);
+    return {kind:"danger",icon:"trash",title:t("rmShopT"),text:t("rmShopP"),rows,note:refundable?t("noRefProd"):t("noRefShop"),input:t("reason"),chips,ok:paid>0?t("okRmRef"):t("remove")};
+  }
+  const x=adm.products.find(z=>z.id===id)||{};
+  return {kind:"danger",icon:"trash",title:t("rmProdT"),text:t("rmProdP"),rows:[[t("rItem"),x.name||""],[t("rShop"),x.shopName||""]],note:t("noRefProd"),input:t("reason"),chips,ok:t("remove")};
+}
+async function moderate(type,id,action){
+  let message="";
+  if(action==="remove"){
+    const v=await dlg(removeOpts(type,id));
+    if(!v)return;message=v;
+  }else{
+    const x=(type==="shop"?adm.shops:adm.products).find(z=>z.id===id)||{};
+    if(!await dlg({kind:"ok",icon:"restore",title:t("resT"),text:t("resP"),rows:[[t(type==="shop"?"rShop":"rItem"),x.name||""]],ok:t("restore")}))return;
+  }
+  try{
+    const j=await api("/api/admin/moderate",{type,id,action,message});
+    if(action==="remove")toast(j.failed?(j.error||t("refFail")):(j.refunded?t("refunded")+": "+j.amount+" Pi":t("removedOk")));
+    await loadAdmin(true);loadShops();
+  }catch(e){toast(e.message)}
+}
+
+/* خيارات نافذة الرفض (محل قيد المراجعة: يسترجع رسوم فتحه ناقص رسوم الشبكة) */
+function rejectOpts(id){
+  const x=adm.shops.find(z=>z.id===id)||{};
+  const pay=adm.payments.find(p=>p.type==="shop_fee"&&p.targetId===id&&["none","failed","stuck"].includes(p.refundStatus));
+  const paid=pay?Number(pay.amount):cfg.shopFee;
+  const rows=[[t("rShop"),x.name||""],[t("rOwner"),"@"+(x.ownerUsername||"")],[t("rShopFee"),pf(paid)],[t("rNet"),"− "+pf(cfg.refundDeduct)],[t("rRef"),pf(Math.max(0,paid-cfg.refundDeduct)),true]];
+  return {kind:"danger",icon:"refund",title:t("rejT"),text:t("rejP"),rows,note:t("rejNote"),input:t("reason"),chips:[t("rc1"),t("rc2"),t("rc3"),t("rc4")],ok:t("okReject")};
+}
+/* مراجعة محل: قبول (نشر) أو رفض (استرجاع الرسوم + إظهار السبب لصاحب المحل) */
+async function review(id,action){
+  const x=adm.shops.find(z=>z.id===id)||{};
+  let message="";
+  if(action==="approve"){
+    if(!await dlg({kind:"ok",icon:"check",title:t("apvT"),text:t("apvP"),rows:[[t("rShop"),x.name||""],[t("rOwner"),"@"+(x.ownerUsername||"")]],ok:t("approve")}))return;
+  }else{
+    const v=await dlg(rejectOpts(id));
+    if(!v)return;message=v;
+  }
+  try{
+    const j=await api("/api/admin/moderate",{type:"shop",id,action,message});
+    if(action==="approve")toast(t("apvOk"));
+    else toast(j.failed?(j.error||t("refFail2")):(j.refunded?t("refunded")+": "+j.amount+" Pi":t("rejOk")));
+    await loadAdmin(true);loadShops();
+  }catch(e){toast(e.message)}
+}
+
+async function refund(id){
+  const x=adm.payments.find(z=>z.id===id)||{};
+  const paid=Number(x.amount)||0;
+  const reason=await dlg({kind:"gold",icon:"refund",title:t("refT"),text:t("refP"),
+    rows:[[t("rItem"),x.targetName||""],[t("rPaid"),pf(paid)],[t("rNet"),"− "+pf(cfg.refundDeduct)],[t("rRef"),pf(Math.max(0,paid-cfg.refundDeduct)),true]],
+    input:t("reason"),optional:true,ok:t("refund")});
+  if(reason===null)return;
+  try{const j=await api("/api/admin/refund",{paymentId:id,reason});toast(t("refunded")+": "+j.amount+" Pi");await loadAdmin(true);loadShops()}
+  catch(e){toast(e.message);loadAdmin(true)}
+}
+
+/* ================= ربط الأحداث ================= */
+document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+$("loginBtn").onclick=()=>login(false);
+$("q").oninput=()=>{renderProducts();renderShops()};
+$("fc").onchange=()=>{buildRegions("");renderProducts();renderShops()};
+$("fr").onchange=()=>{renderProducts();renderShops()};
+$("ov").onclick=e=>{if(e.target===$("ov"))closeM()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeM()});
+$("sf").onchange=e=>upload(e.target,"shop",$("spv"));
+$("pf").onchange=e=>upload(e.target,"prod",$("ppv"));
+$("saveShop").onclick=submitShop;
+$("saveProd").onclick=submitProd;
+$("cancelProd").onclick=hideProd;
+$("addProdBtn").onclick=()=>showProd(null);
+
+document.addEventListener("click",e=>{
+  const q=s=>e.target.closest(s);let el;
+  if(el=q("[data-go]"))return go(el.dataset.go);
+  if(q("[data-close]"))return closeM();
+  if(el=q("[data-pid]"))return openProduct(el.dataset.pid);
+  if(el=q("[data-sid]"))return openShop(el.dataset.sid);
+  if(el=q("[data-atab]"))return setATab(el.dataset.atab);
+  if(el=q("[data-act]")){
+    if(el.dataset.act==="logout")return logout();
+    if(el.dataset.act==="statsRefresh")return loadAdmin(true);
+    if(el.dataset.act==="editShop"){const fm=$("shopForm");fm.classList.toggle("hide");if(!fm.classList.contains("hide"))fm.scrollIntoView({behavior:"smooth"});return}
+  }
+  if(el=q("[data-payp]"))return pay("product_fee",el.dataset.payp);
+  if(el=q("[data-edit]"))return showProd(el.dataset.edit);
+  if(el=q("[data-del]"))return delProd(el.dataset.del);
+  if(el=q("[data-rev]"))return review(el.dataset.id,el.dataset.rev);
+  if(el=q("[data-mod]"))return moderate(el.dataset.type,el.dataset.id,el.dataset.mod);
+  if(el=q("[data-rf]"))return refund(el.dataset.rf);
+});
+
+/* ================= البداية ================= */
+(function init(){
+  setLang(L);
+  piReady=(async()=>{
+    for(let i=0;i<4;i++){
+      try{const r=await fetch(API+"/api/config");if(r.ok){cfg=await r.json();break}}catch(e){}
+      await new Promise(r=>setTimeout(r,4000));
+    }
+    try{Pi.init({version:"2.0",sandbox:cfg.sandbox})}catch(e){}
+    renderTexts();renderMy();
+  })();
+  loadShops();
+  if(LS.get("auto")==="1")login(true);
+})();
+</script>
+</body>
+</html>
