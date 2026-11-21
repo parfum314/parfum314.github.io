@@ -681,7 +681,7 @@ function buildRegions(keep){
 }
 const filt=()=>({q:$("q").value.trim().toLowerCase(),c:$("fc").value,r:$("fr").value});
 
-const pcard=p=>`<article class="pc" data-pid="${esc(p.id)}"><div class="pi"><img src="${esc(p.image)}" alt="" loading="lazy"><span class="price" dir="ltr">${esc(p.price)} ${esc(p.currency)}</span></div><div class="pb"><h3 class="disp">${esc(p.name)}</h3><div class="mut">${esc([p.brand,p.size,t("g_"+(p.gender||"unisex"))].filter(Boolean).join(" · "))}</div>${rtLine(p.rAvg,p.rCount)}<div class="ps">
+const pcard=p=>`<article class="pc" data-pid="${esc(p.id)}"><div class="pi"><img src="${esc(p.image)}" alt="" loading="lazy"><span class="price" dir="ltr">${esc(p.price)} ${esc(p.currency)}</span></div><div class="pb"><h3 class="disp">${esc(p.name)}</h3><div class="mut">${esc([p.brand,p.size,t("g_"+(p.gender||"unisex"))].filter(Boolean).join(" · "))}</div>${rtLine(p.rAvg,p.rCount)}<div class="ps">${PIN}${esc(p.shop.name)} · ${esc(p.shop.region)}</div></div></article>`;
 const scard=s=>`<article class="sc" data-sid="${esc(s.id)}"><img src="${esc(s.image)}" alt="" loading="lazy"><div class="sb"><h3 class="disp">${esc(s.name)}</h3><div class="loc">${PIN}${esc(place(s))}</div>${rtLine(s.rAvg,s.rCount)}<div class="mut">${s.products.length} ${esc(t("perfumes"))}</div></div></article>`;
 
 function renderProducts(){
